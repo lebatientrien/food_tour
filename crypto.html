@@ -64,8 +64,14 @@
           <div class="col" style="padding-top: 2px;">
             <input type="text" id="filter-text-box" style="width: 100%;" placeholder="Search ..." oninput="onFilterTextBoxChanged()" />
           </div>
+          <div class="col-2">
+            <button class="btn btn-outline-success" onclick="externalFilter('positive')">P+</button>
+          </div>
+          <div class="col-2">
+            <button class="btn btn-outline-danger" onclick="externalFilter('negative')">N-</button>
+          </div>
         </div>
-        <div class="row" style="padding-bottom: 5px;">
+        <!-- <div class="row" style="padding-bottom: 5px;">
           <div class="col" id="detail_coin">
             <div class="form-check form-switch" style="padding-top: 5px;">
               <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
@@ -78,7 +84,7 @@
           <div class="col" style="text-align: center;">
             <button class="btn btn-outline-secondary" type="submit" onclick="onBtnExport()">Export</button>
           </div>
-        </div>
+        </div> -->
         <div class="row">
           <div id="grid_overall" class="ag-theme-quartz"></div>
         </div>
@@ -89,7 +95,7 @@
         const grid_element = document.getElementById('grid_overall');
         // Set the height of the chart and grid
         if (width > 500 ) {
-          chart_element.style.minHeight = '278.5px';
+          // chart_element.style.minHeight = '278.5px';
           grid_element.style.height = `${height-85}px`;
         }
         else {
@@ -133,6 +139,8 @@
 
     // Draw the Table
     let gridApi;
+    let filter = "all_record";
+    
     const gridOptions = {
       rowData: [],
       tooltipShowDelay: 500,
@@ -140,7 +148,7 @@
       columnDefs: [
       { field: "record_id", headerName: "ID", width: 70, pinned: "left"},
       { field: "coin_name", headerName: "Name",width: 115, pinned: "left", type: 'rightAligned', valueGetter: (p) => p.data.coin_name.slice(0, -4) },
-      { field: "result_15", headerName: "15", width: 55, type: 'rightAligned',
+      { field: "result_15", headerName: "15", width: 50, type: 'rightAligned',
         cellStyle: params => {
           if (params.value > 2) { return {backgroundColor: '#1cb848'}; }
           if (params.value > 0 & params.value <= 2) { return {backgroundColor: '#9FE2BF'}; }
@@ -149,7 +157,7 @@
           else {return {backgroundColor: '#FFCF69'};}
         }
       },
-      { field: "result_30", headerName: "30", width: 55, type: 'rightAligned', 
+      { field: "result_30", headerName: "30", width: 50, type: 'rightAligned', 
         cellStyle: params => {
           if (params.value > 2) { return {backgroundColor: '#1cb848'}; }
           if (params.value > 0 & params.value <= 2) { return {backgroundColor: '#9FE2BF'}; }
@@ -158,7 +166,7 @@
           else {return {backgroundColor: '#FFCF69'};}
         }
       },
-      { field: "result_45", headerName: "45", width: 55, type: 'rightAligned', 
+      { field: "result_45", headerName: "45", width: 50, type: 'rightAligned', 
         cellStyle: params => {
           if (params.value > 2) { return {backgroundColor: '#1cb848'}; }
           if (params.value > 0 & params.value <= 2) { return {backgroundColor: '#9FE2BF'}; }
@@ -181,57 +189,66 @@
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.avg15_per).toFixed(2)
       },
       { field: "min15_per", headerName:"min15", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.min15_per).toFixed(2)
       },
       { field: "max15_per", headerName:"max15", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.max15_per).toFixed(2)
       },
       { field: "avg30_per", headerName:"avg30", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.avg30_per).toFixed(2)
       },
       { field: "min30_per", headerName:"min30", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.min30_per).toFixed(2)
       },
       { field: "max30_per", headerName:"max30", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.max30_per).toFixed(2)
       },
       { field: "avg45_per", headerName:"avg45", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.avg45_per).toFixed(2)
       },
       { field: "min45_per", headerName:"min45", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.min45_per).toFixed(2)
       },
       { field: "max45_per", headerName:"max45", type: 'rightAligned', width:75,
         cellStyle: params => {
           if (params.value > 0) { return {backgroundColor: '#9FE2BF'}; }
           else { return {backgroundColor: '#fade7a'};}
-        }
+        },
+        valueGetter:(p) => parseFloat(p.data.max45_per).toFixed(2)
       },
-      { field: "trigger_note", headerName:"Note", width:500},
+      { field: "trigger_note", headerName:"Note", width:700},
       ],
       // cellSelection: true,
       rowSelection: {
@@ -241,12 +258,21 @@
       },
       onSelectionChanged: (e) => {
         const selectedData = gridApi.getSelectedRows();
-        console.log(selectedData);
+        // console.log(selectedData);
         const file_name = selectedData[0].date_trigger.replace(" ", "_").replace(/:/g, "-") + '_' + selectedData[0].coin_name +'.png';
         // console.log("https://petiteo.com/crypto/"+file_name);
-        changeImage("https://petiteo.com/crypto/"+file_name);
+        changeImage("crypto/"+file_name);
       },
       // autoSizeStrategy: { type: "fitCellContents"},
+      isExternalFilterPresent: (e) => {return filter !== "all_record";},
+      doesExternalFilterPass: (node) => {
+        // console.log(e);
+        if(node.data){          
+          if (filter == "positive"){ return node.data.result_45 > 0; }
+          if (filter == "negative"){ return node.data.result_45 < 0; }
+        }
+
+      },
       defaultColDef: {
         // flex: 1,
         // minWidth: 150,
@@ -257,22 +283,37 @@
     };
     gridApi = agGrid.createGrid(document.querySelector("#grid_overall"), gridOptions);
     
+    function externalFilter(signal){
+      filter = signal;
+      gridApi.onFilterChanged();
+    }
     // Function to fetch data from a URL
     async function fetchData(url) {
       try {
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
+        if (!response.ok) { throw new Error('Error Network response was not ok ' + response.statusText);  }
         const data = await response.json();
         // console.log(data['data']);
         gridApi.setGridOption("rowData", data['data']);
-      } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
+      } catch (error) 
+      {
+        console.error('Fetch operation error:', error);
+        // Fallback URL
+        const fallbackUrl = 'http://103.173.66.235/api/read_backtest.php?null_data=no';
+        try {
+          const fallbackResponse = await fetch(fallbackUrl);
+          if (!fallbackResponse.ok) {
+            throw new Error('Network response was not ok ' + fallbackResponse.statusText);
+          }
+          const fallbackData = await fallbackResponse.json();
+          gridApi.setGridOption("rowData", fallbackData['data']);
+        } catch (fallbackError) {
+          console.error('Fallback fetch operation error:', fallbackError);
+        }
       }
     }
     // URL to fetch data from
-    const url = 'https://petiteo.com/api/read_backtest.php?null_data=no';    
+    const url = 'http://tientrien.tech/api/read_backtest.php?null_data=no';    
     fetchData(url);
     
   </script>
