@@ -291,6 +291,7 @@
     async function fetchData(url) {
       try {
         const response = await fetch(url);
+
         if (!response.ok) { throw new Error('Error Network response was not ok ' + response.statusText);  }
         const data = await response.json();
         // console.log(data['data']);
@@ -301,7 +302,18 @@
         // Fallback URL
         const fallbackUrl = 'http://103.173.66.235/api/read_backtest.php?null_data=no';
         try {
-          const fallbackResponse = await fetch(fallbackUrl);
+          const fallbackResponse = await fetch(fallbackUrl,{
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            // Add mode to handle CORS
+          },
+          mode: 'no-cors', // 'cors' or 'no-cors' if the server doesn't support CORS
+          credentials: 'same-origin' // or 'include' if you need to send cookies
+        }
+
+          );
           if (!fallbackResponse.ok) {
             throw new Error('Network response was not ok ' + fallbackResponse.statusText);
           }
@@ -313,7 +325,7 @@
       }
     }
     // URL to fetch data from
-    const url = 'http://tientrien.tech/api/read_backtest.php?null_data=no';    
+    const url = 'https://tientrien.tech/api/read_backtest.php?null_data=no';    
     fetchData(url);
     
   </script>
